@@ -232,3 +232,41 @@ FROM DUAL;
 
 SELECT RTRIM(SUBSTR('abcdefgh@naver.com', INSTR('abcdefgh@naver.com','@') + 1) , '.com') as rtrim
 FROM DUAL;
+
+--020 특정 철자를 다른 철자로 변경 (REPlACE)
+
+SELECT ename, REPLACE(sal, 0, '*' )
+FROM emp;
+
+SELECT ename, REGEXP_REPlACE(sal, '[0-3]', '*') as SALARY
+FROM emp;
+
+
+CREATE TABLE TEST_ENAME
+(ENAME      VARCHAR2(10));
+
+INSERT INTO TEST_ENAME VALUES('김인호');
+INSERT INTO TEST_ENAME VALUES('안상수');
+INSERT INTO TEST_ENAME VALUES('최영희');
+COMMIT;
+
+SELECT ename
+FROM test_ename;
+
+/*
+SELECT ename REPLACE (ename, '[2]', '*')
+FROM test_ename;
+*/
+
+
+--SUBSTR + REPLACE
+SELECT REPLACE(ENAME, SUBSTR(ENAME, 2, 1), '*') as "전광판 이름"
+FROM test_ename;
+
+--021 특정 철자를 N개 만큼 채우기 (LPAD, RPAD)
+SELECT ename, LPAD(sal, 10, '*') as salary1, RPAD(sal, 10, '*') as salary2
+FROM emp;
+
+SELECT ename, sal, RPAD('#', round(sal/100) , '#') as bar_chart
+FROM emp;
+
