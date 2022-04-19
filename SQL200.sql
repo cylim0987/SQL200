@@ -270,3 +270,111 @@ FROM emp;
 SELECT ename, sal, RPAD('#', round(sal/100) , '#') as bar_chart
 FROM emp;
 
+--022 특정 철자 잘라내기 (TRIM, RTRIM, LTRIM)
+SELECT 'smith', LTRIM('smith', 's') as 맨앞삭제, RTRIM('smith', 'h'), TRIM('s' from 'smiths')
+FROM dual;
+
+INSERT INTO emp(empno, ename, sal, job, deptno)
+VALUES(8291, 'JACK ', 3000, 'SALESMAN', 30);
+commit;
+
+--위에 공백을 넣었기 때문에 안 나온다
+SELECT ename, sal
+FROM emp
+WHERE ename = 'JACK';
+--
+
+SELECT ename, sal
+FROM emp
+WHERE RTRIM(ename)='JACK';
+
+DELETE FROM emp
+WHERE TRIM(ename)='JACK';
+commit;
+
+--023 반올림해서 출력(ROUND)
+SELECT '876.567' as 숫자, ROUND(876.567, 1)
+FROM dual;
+-- 567에서 6에서 반올림 되었다. 그러면 -2는 876에서 7에서 반올림이니까 900이 나올까. 그렇다
+
+SELECT '876.567' as 숫자, ROUND(876.567, -2)
+FROM dual;
+-- 소수점을 가르는 . 이 0의 자리를 가리킨다.
+
+--024 숫자를 버리고 출력(TRUNC)
+SELECT '876.567' as 숫자, TRUNC(876.567, 1)
+FROM dual;
+
+--025 나눈 나머지 값 출력(MOD)
+SELECT MOD(10, 3)
+FROM dual;
+
+-- empno를 2로 나눈 나머지.
+SELECT empno, MOD(empno, 2)
+FROM emp;
+
+--사원번호가 짝수인 사원들의 사원 번호와 이름을 출력하는 쿼리 -
+    --SELECT절에 몰아넣지 말고 WHERE를 이용해야... SELECT에서 어떻게 더 해야하는지 고민하니까 답이 나올리가 없음
+    --SELECT empno, ename, MOD(empno, 2)
+    --FROM emp;
+SELECT empno, ename
+FROM emp
+WHERE MOD(empno, 2) = 0;
+
+--10을 3으로 나눈 몫을 출력.
+SELECT FLOOR(10/3)
+FROM dual;
+
+--026 날짜 간 개월 수 출력 (MONTHS_BETWEEN)
+SELECT ename, MONTHS_BETWEEN(sysdate, hiredate)
+FROM emp;
+
+SELECT TO_DATE('2019-06-01', 'RRRR-MM-DD') - TO_DATE('2018-10-01', 'RRRR-MM-DD')
+FROM dual;
+
+--다음과 같이 하면 총 주수가 35가 나온다 그런데
+SELECT ROUND((TO_DATE('2019-06-01','RRRR-MM-DD') - TO_DATE('2018-10-01','RRRR-MM-DD')) / 7 ) as "총 주수"
+FROM dual;
+
+--이렇게 하면 우괄호를 누락해서 오류가 발생함.
+SELECT ROUND((TO_DATE('2019-06-01','RRRR-MM-DD') -
+            TO_DATE('2018-10-01','RRRR-MM-DD')) / 7 ) as "총 주수"
+FROM dual;
+
+--027 개월 수 더한 날짜 출력하기(ADD_MONTHS)
+SELECT ADD_MONTHS(TO_DATE('2019-05-01', 'RRRR-MM-DD'), 100)
+FROM dual;
+
+SELECT TO_DATE('2019-05-01', 'RRRR-MM-DD') + interval '100' month
+FROM dual;
+
+SELECT TO_DATE('2019-05-01', 'RRRR-MM-DD') + interval '3' year
+FROM dual;
+
+--028 특정 날짜 뒤에 오는 요일 날짜 출력(NEXT_DAY) -- 월요일, 월 , 화 다 된다.
+SELECT '2019/05/22' as 날짜, NEXT_DAY('2019/05/22', '화')
+FROM dual;
+
+SELECT sysdate as "오늘 날짜"
+FROM dual;
+
+SELECT NEXT_DAY(SYSDATE, '화요일') as "다음 날짜"
+FROM dual;
+
+SELECT NEXT_DAY(ADD_MONTHS('2019/05/22', 100), '화요일') as "다음 날짜"
+FROM dual;
+
+SELECT NEXT_DAY(ADD_MONTHS(sysdate, 100), '월요일') as "다음 날짜"
+FROM dual;
+
+--029 특정 날짜가 있는 달의 마지막 날짜 출력(LAST_DAY)
+SELECT '2019/05/22' as 날짜, LAST_DAY('2019/05/22') as "마지막 날짜"
+FROM dual;
+
+SELECT LAST_DAY(SYSDATE) - SYSDATE as "남은 날짜"
+FROM dual;
+
+--이름이 KING인 사원의 이름, 입사일, 입사한 달의 마지막 날짜를 출력
+SELECT ename, hiredate, LAST_DAY(hiredate)
+FROM emp
+WHERE ename='KING';
