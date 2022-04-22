@@ -378,3 +378,120 @@ FROM dual;
 SELECT ename, hiredate, LAST_DAY(hiredate)
 FROM emp
 WHERE ename='KING';
+
+--030 문자형으로 데이터 유형 변환(TO_CHAR)
+SELECT ename, hiredate, sal
+FROM emp
+WHERE ename = 'SCOTT';
+
+
+--숫자형을 문자형으로 변환할 때, 날짜형을 문자형으로 변환할 때 : TO_CHAR
+SELECT ename, TO_CHAR(hiredate, 'DAY') as 요일, TO_CHAR(sal, '999,999') as 월급
+FROM emp
+WHERE ename = 'SCOTT';
+
+SELECT hiredate, TO_CHAR(hiredate, 'RRRR') as 연도, TO_CHAR(hiredate, 'MM')as 달,
+                TO_CHAR(hiredate, 'DD') as 일, TO_CHAR(hiredate, 'DAY') as 요일
+FROM emp
+WHERE hiredate = '81/11/17';
+
+--1981년도에 입사한 사원의 이름과 입사일을 출력하는 쿼리
+SELECT ename, hiredate
+FROM emp
+WHERE TO_CHAR(hiredate, 'RRRR') = '1981';
+
+SELECT ename as 이름, EXTRACT(year from hiredate) as 연도,
+                     EXTRACT(month from hiredate) as 달,
+                     EXTRACT(day from hiredate) as 일
+FROM emp;
+
+SELECT ename as 이름, to_char(sal, '999,999') as 월급
+FROM emp;
+
+SELECT ename as 이름, TO_CHAR(sal*200, '999,999,999') as 월급
+FROM emp;
+
+SELECT ename as 이름, TO_CHAR(sal*200, 'L999,999,999') as 월급
+FROM emp;
+
+--031 날짜형으로 데이터 유형 변환(TO_DATE)
+SELECT ename, hiredate
+FROM emp
+WHERE hiredate = TO_DATE('81/11/17','RR/MM/DD');
+
+SELECT *
+FROM NLS_SESSION_PARAMETERS
+WHERE parameter = 'NLS_DATE_FORMAT';
+
+SELECT ename, hiredate
+FROM emp
+WHERE hiredate = TO_DATE('81/11/17');
+
+ALTER SESSION SET NLS_DATE_FORMAT = 'DD/MM/RR';
+
+SELECT ename, hiredate
+FROM emp
+WHERE hiredate = '17/11/81';
+
+SELECT ename, hiredate
+FROM emp
+WHERE hiredate = TO_DATE('81/11/17', 'RR/MM/DD');
+
+ALTER SESSION set nls_date_format='rr/mm/dd';
+
+ALTER SESSION SET NLS_DATE_FORMAT='RR/MM/DD';
+
+--032 암시적 형 변환?
+SELECT ename, sal
+FROM emp
+WHERE sal = '3000';
+
+--032-2
+CREATE TABLE EMP32
+(ENAME VARCHAR2(10),
+SAL VARCHAR2(10));
+
+INSERT INTO EMP32 VALUES('SCOTT', '3000');
+INSERT INTO EMP32 VALUES('SMITH', '1200');
+COMMIT;
+
+SELECT ename, sal
+FROM emp32
+WHERE sal = '3000';
+
+--된다. 문자형=숫자형
+SELECT ename, sal
+FROM emp32
+WHERE sal = 3000;
+
+--오라클이 자동변환함.
+SELECT ename, sal
+FROM emp32
+WHERE TO_NUMBER(SAL) = 3000;
+
+SET AUTOT ON
+
+SELECT ename, sal
+FROM emp32
+WHERE SAL = 3000;
+
+--033 NULL 값 대신 다른 데이터 출력(NVL, NVL2)
+SELECT ename, comm, NVL(comm, 0)
+FROM emp;
+
+SELECT ename, sal, comm, sal+comm, job
+FROM emp;
+
+--IN은 (값)을 포함하는 조건검색
+SELECT ename, sal, comm, sal+comm, job
+FROM emp
+WHERE job IN ('SALESMAN','ANALYST');
+
+SELECT ename, sal, comm, NVL(comm, 0), sal+NVL(comm, 0)
+FROM emp
+WHERE job IN ('SALESMAN', 'ANALYST');
+
+SELECT ename, sal, comm, NVL2(comm, sal+comm, sal)
+FROM emp
+WHERE job IN ('SALESMAN', 'ANALYST');
+
