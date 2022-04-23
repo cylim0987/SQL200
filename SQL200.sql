@@ -495,3 +495,127 @@ SELECT ename, sal, comm, NVL2(comm, sal+comm, sal)
 FROM emp
 WHERE job IN ('SALESMAN', 'ANALYST');
 
+--034 IF문을 SQL로 구현(DECODE)
+--                          부서 번호가 10번이면 300,  부서번호가 20번이면 400 부서번호가 10번, 20번이 아니면 0
+SELECT ename, deptno, DECODE(deptno,   10,     300,            20,    400,            0) as 보너스 
+FROM emp;
+    /*
+    IF DEPTNO = 10 THEN 300
+    else if DEPTNO = 20 THEN 400
+    else 0
+    */
+
+SELECT empno, mod(empno, 2), DECODE(mod(empno, 2), 0, '짝수', 1, '홀수') as 보너스
+FROM emp;
+
+SELECT empno, DECODE(mod(empno, 2), 0, '짝수', 1, '홀수') as 보너스
+FROM emp;
+
+--나머지에 해당하는 2000은 else에 해당하는 것이기 때문에 앞에 아무것도 써줄 필요 없다는 것을 기억할 것
+SELECT ename, job, DECODE(job, 'SALESMAN', 5000, 'MANAGER',333, 2000) as 보너스
+FROM emp;
+SELECT ename, job, DECODE(job, 'SALESMAN', 5555, 2000) as 보너스
+FROM emp;
+
+--035 IF문을 SQL로 구현(CASE)
+SELECT ename, job, sal, CASE WHEN sal >= 3000 THEN 500
+                             WHEN sal >= 2000 THEN 300
+                             WHEN sal >= 1000 THEN 200
+                             ELSE 0 END AS BONUS
+    FROM emp
+    WHERE job IN ('SALESMAN', 'ANALYST');
+    
+--CASE / DECODE
+--DECODE는 등호(=)비교만 가능,
+--CASE는 등호(=) 부등호(>=, <=, >, <) 둘 다 가능.
+
+                    --다음의 예제는 이름, 직업, 커미션, 보너스를 출력합니다. 보너스는 커미션이 NULL이면
+                    --500을 출력하고 NULL이 아니면 0을 출력합니다.
+SELECT ename, job, comm, DECODE(comm, null, 500, 0)  as 보너스
+FROM emp;
+
+                    -- + SALESMAN과 ANALYST만
+SELECT ename, job, comm, CASE WHEN comm is null THEN 500
+                              ELSE 0 END as 보너스
+FROM emp
+WHERE job in ('SALESMAN', 'ANALYST');
+    
+                    --보너스를 출력할 때 직업이 SALESMAN, ANALYST이면 500을 출력하고, 직업
+                    --이 CLERK, MANAGER이면 400을 출력하고, 나머지 직업은 0을 출력하는 쿼리
+/*
+SELECT ename, job, sal, DECODE(('SALESMAN', 'ANALYST'), 500, ('CLERK', 'MANAGER'), 400, 0)
+FROM emp;
+*/
+
+/* -- is가 아니라 IN을 썼어야지 값을 포함하는거니까
+SELECT ename, job, CASE WHEN job is ('SALESMAN', 'ANALYST') THEN 500
+                        WHEN job is ('CLERK', 'MANAGER') THEN 400
+                        ELSE 0 END as 보너스
+FROM emp;
+*/
+SELECT ename, job, CASE WHEN job IN ('SALESMAN', 'ANALYST') THEN 500
+                        WHEN job IN ('CLERK', 'MANAGER') THEN 400
+                        ELSE 0 END bonus
+FROM emp;
+
+--036 최대값 출력(MAX)
+SELECT MAX(sal)
+FROM emp;
+
+SELECT MAX(sal)
+FROM emp
+WHERE job='SALESMAN';
+
+
+/* -- 에러. job 칼럼의 값은 여러 개의 행이 출력되려고 하는데 MAX(sal)의 값은 하나가 출력되려 하기 때문임.
+        때문에 GROUP by 절이 필요함 GROUP BY절은 데이터를 grouping한다.
+SELECT job, MAX(sal)
+FROM emp
+WHERE job='SALESMAN';
+*/
+
+SELECT job, MAX(sal)
+FROM emp
+WHERE job='SALESMAN'
+GROUP BY job;
+
+                    --부서 번호와 부서 번호별 최대 월급을 출력하는 쿼리입
+SELECT deptno, MAX(sal)
+FROM emp
+GROUP BY deptno;
+
+
+--037 최소값 출력(MIN)
+SELECT MIN(SAL)
+FROM EMP
+WHERE job = 'SALESMAN';
+
+                        --직업과 직업별 최소 월급을 출력하는데, ORDER BY절을 사용하여 최소 월급이 높은것부터 출력
+/*SELECT MIN(sal)
+FROM emp
+ORDER BY job;
+*/
+
+--ORDER BY 정렬 asc, desc 
+--ORDER BY절은 항상 맨 마지막에 작성하고 실행 또한 맨 마지막에 실행
+SELECT job, MIN(sal) as 최소값
+FROM emp
+GROUP BY job
+ORDER BY 최소값 DESC;
+
+SELECT MIN(sal)
+FROM emp
+WHERE 1 = 2;
+
+                        --직업, 직업별 최소 월급을 출력하는데, 직업에서 SAELSMAN은 제외하고 출력하고 직업별 최소 월급이 높은 것부터 출력
+SELECT job, MIN(sal)
+FROM emp
+GROUP BY job
+ORDER BY MIN(sal) desc;
+                        
+SELECT job, MIN(sal)
+FROM emp
+WHERE job != 'SALESMAN' --제외
+GROUP BY job
+ORDER BY MIN(sal) desc;                        
+                        
