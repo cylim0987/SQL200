@@ -618,4 +618,3 @@ FROM emp
 WHERE job != 'SALESMAN' --Á¦¿Ü
 GROUP BY job
 ORDER BY MIN(sal) desc;                        
-                        
