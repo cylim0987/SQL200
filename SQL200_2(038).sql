@@ -328,3 +328,23 @@ SELECT deptno, ename, sal, ROW_NUMBER() OVER (PARTITION BY deptno ORDER BY sal D
 FROM emp
 WHERE deptno in (10, 20);
 
+--056 출력되는 행 제한 (ROWNUM)
+        --사원 테이블에서 사원 번호, 이름, 직업, 월급을 상단 5개의 행만 출력
+SELECT ROWNum, empno, ename, job, sal
+FROM emp
+WHERE ROWNUM <= 5;
+
+--057 출력되는 행 제한 (Simple TOP-n QUERIES)
+        --월급이 높은 사원순으로 사원 번호, 이름, 직업, 월급을 4개의 행으로 제한해서 출력
+SELECT empno, ename, job, sal
+FROM emp
+ORDER BY sal DESC FETCH FIRST 4 ROWS ONLY; --..
+
+SELECT empno, ename, job, sal
+FROM emp
+ORDER BY sal desc
+FETCH FIRST 20 PERCENT ROWS ONLY; --..
+
+SELECT empno, ename, job, sal
+FROM emp
+ORDER BY sal DESC FETCH FIRST 2 ROWS WITH TIES;
